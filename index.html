@@ -1,0 +1,909 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f8f1df">
+<title>LYRIC — Music Raffi</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --paper:#fffdf5;
+ --cream:#f7f0dc;
+ --ink:#33271e;
+ --brown:#784323;
+ --red:#df969b;
+ --green:#e9f0e9;
+ --gold:#f5e7ad;
+ --muted:#82776c;
+}
+body{
+ background:#eae4d5;color:var(--ink);
+ font-family:Georgia,serif;
+ padding-bottom:90px;
+}
+button,input{font:inherit}
+button,a{cursor:pointer}
+.app{
+ max-width:900px;margin:auto;min-height:100vh;
+ padding:22px 17px;
+ background-color:var(--paper);
+ background-image:
+ repeating-linear-gradient(
+  to bottom,transparent 0px,transparent 37px,
+  #dcd4c3 38px,#dcd4c3 39px
+ );
+ position:relative;
+ box-shadow:0 0 25px #0001;
+}
+.app:before{
+ content:"";position:absolute;
+ top:0;bottom:0;left:48px;
+ width:3px;background:#eaa0a4;
+ opacity:.8;pointer-events:none;
+}
+.app>*{position:relative;z-index:1}
+header{
+ display:flex;justify-content:space-between;
+ align-items:center;margin:12px 0 27px;
+ gap:10px;
+}
+.logo{
+ font-size:28px;font-weight:900;
+ letter-spacing:3px;color:#4c2d1d;
+}
+.logo span{color:#a75b3b}
+.header-btn{
+ border:1px solid #eadb9e;
+ background:#fff7d9;padding:10px 13px;
+ border-radius:12px;color:#714322;
+ font-weight:bold;font-size:12px;
+}
+.page{display:none;animation:fade .2s}
+.page.active{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+.paper-title{
+ font-size:29px;font-weight:bold;
+ font-style:italic;margin:18px 0 6px;
+}
+.subtitle{font-size:13px;color:var(--muted)}
+.section{
+ display:flex;justify-content:space-between;
+ align-items:center;margin:30px 0 15px;
+ gap:10px;
+}
+.section h2{
+ font-size:17px;letter-spacing:1px;
+ text-transform:uppercase;
+}
+.section button{
+ border:0;background:none;color:#a45c3d;
+ font-size:12px;font-weight:bold;
+}
+.card{
+ background:#fffefa;border:2px solid #e0dbd0;
+ border-radius:19px;padding:15px;
+ box-shadow:0 3px 7px #0000000b;
+}
+.hero{
+ display:flex;align-items:center;gap:16px;
+ background:#fff9e5;border:2px solid #eee1aa;
+ border-radius:20px;padding:18px;
+}
+.hero-info{flex:1;min-width:0}
+.hero small{
+ color:#94522e;letter-spacing:2px;font-weight:bold;
+ font-size:10px;
+}
+.hero h1{font-size:26px;margin:10px 0}
+.hero p{font-size:12px;color:#776c60;line-height:1.6}
+.hero img{
+ width:112px;height:112px;object-fit:cover;
+ border-radius:13px;border:3px solid white;
+ box-shadow:0 3px 10px #0002;
+}
+.primary{
+ border:0;border-radius:11px;
+ padding:12px 17px;margin-top:13px;
+ color:white;background:#342b27;
+ font-weight:bold;font-size:12px;
+}
+.cards{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:14px;
+}
+.music-card{min-width:0;cursor:pointer}
+.cover{
+ width:100%;aspect-ratio:1;
+ border-radius:12px;overflow:hidden;
+ background:#eee3ce;
+ border:1px solid #e0d7c5;
+ display:grid;place-items:center;
+ color:#9b6643;font-size:32px;
+}
+.cover img{width:100%;height:100%;object-fit:cover}
+.music-name{
+ display:block;font-size:12px;font-weight:bold;
+ margin-top:8px;white-space:nowrap;
+ overflow:hidden;text-overflow:ellipsis;
+}
+.music-artist{
+ display:block;font-size:11px;color:#82776c;
+ margin-top:5px;white-space:nowrap;
+ overflow:hidden;text-overflow:ellipsis;
+}
+
+/* SEARCH */
+.searchbox{
+ display:flex;gap:7px;padding:9px;
+ background:white;border:2px solid #e1d9c9;
+ border-radius:13px;margin:20px 0;
+}
+.searchbox input{
+ flex:1;min-width:0;border:0;
+ background:transparent;outline:0;
+ padding:9px;color:#33271e;font-size:13px;
+}
+.searchbox button{
+ border:0;border-radius:9px;
+ background:#352a25;color:white;
+ padding:10px 15px;font-weight:bold;
+}
+.list{display:flex;flex-direction:column;gap:11px}
+.song-row{
+ display:flex;align-items:center;gap:13px;
+ padding:11px;background:#fffefa;
+ border:1.5px solid #e2ddd2;
+ border-radius:13px;cursor:pointer;
+}
+.song-row .cover{
+ width:60px;height:60px;flex-shrink:0;
+}
+.row-info{flex:1;min-width:0}
+.row-title{font-size:13px;font-weight:bold;display:block}
+.row-artist{font-size:11px;color:#82776c;margin-top:5px;display:block}
+.arrow{font-size:23px;color:#94552f}
+.message{text-align:center;color:#87796b;padding:28px 8px;font-size:13px}
+
+/* DETAIL */
+.back{
+ background:#fff4d5;border:1px solid #e8dcae;
+ padding:10px 15px;border-radius:10px;
+ color:#754322;margin-bottom:18px;
+}
+.detail-cover{
+ display:block;width:min(230px,75vw);
+ aspect-ratio:1;object-fit:cover;
+ border-radius:17px;margin:8px auto 20px;
+ border:4px solid white;
+ box-shadow:0 4px 15px #0002;
+ background:#eee3ce;
+}
+.detail-info{text-align:center}
+.detail-info h1{font-size:24px;overflow-wrap:anywhere}
+.detail-info p{font-size:13px;color:#817365;margin-top:7px}
+.actions{
+ display:flex;justify-content:center;
+ flex-wrap:wrap;gap:9px;margin:20px 0;
+}
+.action{
+ text-decoration:none;border:1px solid #e2d8c6;
+ background:#fff8e5;color:#68432b;
+ padding:12px 15px;border-radius:10px;
+ font-size:12px;font-weight:bold;
+}
+.youtube{background:#f8e4df;color:#a42e27}
+.lyric-box{
+ background:#fffefa;border:2px solid #e1dbd0;
+ border-radius:16px;padding:19px;margin-top:20px;
+}
+.lyric-box h3{font-size:16px;margin-bottom:17px}
+.lyric-text{
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ line-height:2;font-size:14px;color:#594a3e;
+}
+
+/* DEVELOPER */
+.dev-banner{
+ background:#f7edc9;border:2px solid #eadb9e;
+ border-radius:16px;padding:18px;text-align:center;
+}
+.dev-avatar{
+ width:75px;height:75px;border-radius:50%;
+ background:#342b27;color:#ffe9ae;
+ display:grid;place-items:center;
+ font-size:29px;margin:0 auto 13px;
+ border:4px solid white;
+}
+.dev-banner h2{font-size:23px;font-style:italic}
+.dev-banner p{font-size:12px;color:#817365;margin-top:8px}
+.dev-links{
+ display:flex;flex-direction:column;
+ gap:12px;margin-top:20px;
+}
+.dev-link{
+ display:flex;align-items:center;gap:13px;
+ text-decoration:none;color:#4a382b;
+ background:#fffefa;border:2px solid #e1dbd0;
+ padding:15px;border-radius:13px;
+}
+.dev-icon{
+ width:43px;height:43px;border-radius:11px;
+ display:grid;place-items:center;
+ background:#f7edcf;font-size:20px;
+}
+.dev-link strong{font-size:13px;display:block}
+.dev-link small{font-size:11px;color:#887b6e;display:block;margin-top:5px}
+.dev-link .arrow{margin-left:auto}
+
+/* BOTTOM NAV */
+.nav{
+ position:fixed;bottom:0;left:0;right:0;
+ display:flex;justify-content:center;
+ background:#fffdf5;
+ border-top:2px solid #e2dccc;
+ box-shadow:0 -3px 12px #0000000b;
+ z-index:10;
+}
+.nav button{
+ flex:1;max-width:150px;border:0;
+ background:none;color:#8b8178;
+ padding:12px 3px 15px;font-size:11px;
+}
+.nav button span{display:block;font-size:21px;margin-bottom:5px}
+.nav button.active{color:#995c9e;font-weight:bold}
+.footer{
+ text-align:center;color:#897b6e;
+ font-size:11px;margin:40px 0 15px;
+ line-height:2;
+}
+@media(min-width:650px){
+ .cards{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .hero img{width:150px;height:150px}
+}
+@media(max-width:390px){
+ .app{padding:18px 12px}
+ .app:before{left:36px}
+ .hero{padding:13px;gap:10px}
+ .hero img{width:90px;height:90px}
+ .hero h1{font-size:22px}
+ .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+ <div class="logo">LYRIC<span>.</span></div>
+ <button class="header-btn" onclick="showPage('developerPage')">
+  ♛ Developer
+ </button>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page active">
+ <div class="hero">
+  <div class="hero-info">
+   <small>✦ DISCOVER MUSIC</small>
+   <h1>Discover Music</h1>
+   <p>Find your favorite songs and explore their lyrics.</p>
+   <button class="primary" onclick="goSearch()">Search Songs ↗</button>
+  </div>
+  <img id="heroImage"
+   src="https://placehold.co/300x300/e9dfcb/76533c?text=Music"
+   alt="Featured music">
+ </div>
+
+ <div class="section">
+  <h2>Recently Played</h2>
+  <button onclick="showRecent()">See all →</button>
+ </div>
+ <div class="cards" id="recent"></div>
+
+ <div class="section">
+  <h2>Popular Songs</h2>
+  <button onclick="goSearch()">Discover →</button>
+ </div>
+ <div class="cards" id="popular"></div>
+
+ <div class="section"><h2>Discover More</h2></div>
+ <div class="cards" id="more"></div>
+
+ <div class="card" style="margin-top:28px;text-align:center">
+  <p style="font-weight:bold;font-size:14px">Want to know the developer?</p>
+  <p style="font-size:12px;color:#82776c;margin-top:7px">Meet the person behind LYRIX.</p>
+  <button class="primary" onclick="showPage('developerPage')">
+   Developer By Raffi →
+  </button>
+ </div>
+</section>
+
+<!-- RECENT -->
+<section id="recentPage" class="page">
+ <h2 class="paper-title">Recently Played</h2>
+ <p class="subtitle">Your recently opened songs.</p>
+ <div class="list" id="allRecent" style="margin-top:22px"></div>
+</section>
+
+<!-- SEARCH -->
+<section id="searchPage" class="page">
+ <h2 class="paper-title">Search Music</h2>
+ <p class="subtitle">Find songs, artists and lyrics.</p>
+
+ <form class="searchbox" id="searchForm">
+  <input id="query" placeholder="Search title or artist..." required>
+  <button type="submit">Search</button>
+ </form>
+
+ <div class="section"><h2 id="searchHeading">Search Results</h2></div>
+ <div class="list" id="searchResults"></div>
+ <div class="message" id="searchStatus">Search your favorite song.</div>
+</section>
+
+<!-- MUSIC -->
+<section id="musicPage" class="page">
+ <h2 class="paper-title">Music Collection</h2>
+ <p class="subtitle">Explore our music collection.</p>
+ <div class="cards" id="allMusic" style="margin-top:22px"></div>
+</section>
+
+<!-- SONG DETAIL -->
+<section id="detailPage" class="page">
+ <button class="back" onclick="goBack()">← Back</button>
+ <div id="detailArtwork"></div>
+ <div class="detail-info">
+  <h1 id="detailTitle"></h1>
+  <p id="detailArtist"></p>
+ </div>
+ <div class="actions">
+  <a id="youtubeLink" class="action youtube"
+   target="_blank" rel="noopener">▶ Search YouTube</a>
+  <button class="action" onclick="copyTitle()">Copy Title</button>
+ </div>
+ <div class="lyric-box">
+  <h3>♫ Song Lyrics</h3>
+  <div id="lyricText" class="lyric-text">Loading lyrics...</div>
+ </div>
+</section>
+
+<!-- DEVELOPER -->
+<section id="developerPage" class="page">
+ <button class="back" onclick="goBack()">← Back</button>
+
+ <div class="dev-banner">
+  <div class="dev-avatar">♛</div>
+  <h2>Developer Profile</h2>
+  <p>THE PERSON BEHIND LYRIX</p>
+  <div style="margin-top:16px;font-weight:bold">
+   Developer By Raffi
+  </div>
+ </div>
+
+ <div class="section">
+  <h2>Contact Developer</h2>
+ </div>
+
+ <div class="dev-links">
+
+  <a class="dev-link"
+   href="https://wa.me/6285746154778"
+   target="_blank" rel="noopener">
+   <div class="dev-icon">☎</div>
+   <div>
+    <strong>WhatsApp Developer</strong>
+    <small>085746154778</small>
+   </div>
+   <span class="arrow">↗</span>
+  </a>
+
+  <a class="dev-link"
+   href="https://www.instagram.com/raffi__v2/"
+   target="_blank" rel="noopener">
+   <div class="dev-icon">◎</div>
+   <div>
+    <strong>Instagram Developer</strong>
+    <small>@raffi__v2</small>
+   </div>
+   <span class="arrow">↗</span>
+  </a>
+
+  <a class="dev-link"
+   href="https://t.me/Raffioffci5"
+   target="_blank" rel="noopener">
+   <div class="dev-icon">➤</div>
+   <div>
+    <strong>Telegram Developer</strong>
+    <small>@Raffioffci5</small>
+   </div>
+   <span class="arrow">↗</span>
+  </a>
+
+ </div>
+
+ <div class="card" style="margin-top:25px;text-align:center">
+  <h3 style="font-size:17px">Thank You!</h3>
+  <p style="font-size:12px;color:#82776c;margin-top:9px;line-height:1.8">
+   Thank you for visiting LYRIX.<br>
+   Enjoy discovering music and lyrics.
+  </p>
+  <p style="font-size:12px;font-weight:bold;margin-top:14px">
+   © NEW LYRIX · Developer By Raffi
+  </p>
+ </div>
+</section>
+
+<div class="footer">
+ LYRIX © NEW<br>
+ <b>Developer By Raffi</b>
+</div>
+
+</div>
+
+<!-- 4 MENU TETAP -->
+<nav class="nav">
+ <button id="navHome" class="active" onclick="showPage('home')">
+  <span>⌂</span>Home
+ </button>
+ <button id="navRecent" onclick="showRecent()">
+  <span>◷</span>Recent
+ </button>
+ <button id="navSearch" onclick="goSearch()">
+  <span>⌕</span>Search
+ </button>
+ <button id="navMusic" onclick="showPage('musicPage')">
+  <span>♫</span>Music
+ </button>
+</nav>
+
+<script>
+const LYRICS_API="https://lrclib.net/api/search";
+const ITUNES_API="https://itunes.apple.com/search";
+
+const songs=[
+ ["She Doesn't Mind","Sean Paul"],
+ ["Love Me Harder","Ariana Grande"],
+ ["Girls Like You","Maroon 5"],
+ ["Sing Me to Sleep","Alan Walker"],
+ ["Back to You","Selena Gomez"],
+ ["Perfect","Ed Sheeran"],
+ ["Until I Found You","Stephen Sanchez"],
+ ["Night Changes","One Direction"],
+ ["Photograph","Ed Sheeran"],
+ ["Memories","Maroon 5"]
+].map(([title,artist])=>({title,artist}));
+
+let currentSong=null;
+let previousPage="home";
+let artworkCache={};
+let recentSongs=[];
+
+try{
+ artworkCache=JSON.parse(localStorage.getItem("lyrixArtwork")||"{}");
+ recentSongs=JSON.parse(localStorage.getItem("lyrixRecent")||"[]");
+}catch(e){}
+
+function saveData(){
+ try{
+  localStorage.setItem("lyrixArtwork",JSON.stringify(artworkCache));
+  localStorage.setItem("lyrixRecent",JSON.stringify(recentSongs));
+ }catch(e){}
+}
+
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+
+ const map={
+  home:"navHome",
+  recentPage:"navRecent",
+  searchPage:"navSearch",
+  musicPage:"navMusic"
+ };
+ if(map[id])document.getElementById(map[id]).classList.add("active");
+ window.scrollTo(0,0);
+}
+
+function goSearch(){
+ showPage("searchPage");
+ document.getElementById("query").focus();
+}
+function goBack(){showPage(previousPage)}
+function songKey(s){return (s.title+"|"+s.artist).toLowerCase()}
+
+// ITUNES COVER API
+function itunesSearch(query){
+ return new Promise((resolve,reject)=>{
+  const callback="lyrix_"+Date.now()+"_"+Math.floor(Math.random()*9999);
+  const script=document.createElement("script");
+  const timer=setTimeout(()=>{
+   cleanup();
+   reject(Error("Timeout"));
+  },10000);
+
+  function cleanup(){
+   clearTimeout(timer);
+   delete window[callback];
+   script.remove();
+  }
+
+  window[callback]=data=>{
+   cleanup();
+   resolve(data.results||[]);
+  };
+
+  script.onerror=()=>{
+   cleanup();
+   reject(Error("API unavailable"));
+  };
+
+  script.src=ITUNES_API+"?term="+
+   encodeURIComponent(query)+
+   "&entity=song&limit=10&callback="+callback;
+
+  document.body.appendChild(script);
+ });
+}
+
+// DEEZER BACKUP
+async function deezerSearch(title,artist){
+ try{
+  const url="https://api.deezer.com/search?q="+
+   encodeURIComponent(title+" "+artist);
+
+  const response=await fetch(url);
+  if(!response.ok)return "";
+
+  const data=await response.json();
+  const list=data.data||[];
+
+  const match=list.find(x=>
+   x.title?.toLowerCase()===title.toLowerCase()&&
+   x.artist?.name?.toLowerCase()===artist.toLowerCase()
+  )||list[0];
+
+  return match?.album?.cover_xl||
+   match?.album?.cover_big||
+   match?.album?.cover_medium||"";
+ }catch(e){return ""}
+}
+
+async function getArtwork(title,artist){
+ const key=(title+"|"+artist).toLowerCase();
+
+ if(artworkCache[key])return artworkCache[key];
+
+ let image="";
+
+ try{
+  const results=await itunesSearch(title+" "+artist);
+
+  if(results.length){
+   const match=results.find(x=>
+    x.trackName?.toLowerCase()===title.toLowerCase()&&
+    x.artistName?.toLowerCase()===artist.toLowerCase()
+   )||results.find(x=>
+    x.artistName?.toLowerCase()===artist.toLowerCase()
+   )||results[0];
+
+   image=match.artworkUrl100||"";
+   image=image.replace("100x100bb","600x600bb");
+  }
+ }catch(e){
+  console.log("Apple artwork:",e.message);
+ }
+
+ if(!image){
+  image=await deezerSearch(title,artist);
+ }
+
+ if(image){
+  artworkCache[key]=image;
+  saveData();
+ }
+
+ return image;
+}
+
+// CREATE COVER
+function createCover(url,title){
+ const box=document.createElement("div");
+ box.className="cover";
+
+ if(url){
+  const img=document.createElement("img");
+  img.src=url;
+  img.alt="Cover "+title;
+  img.onerror=()=>{
+   img.remove();
+   box.textContent="♫";
+  };
+  box.appendChild(img);
+ }else{
+  box.textContent="♫";
+ }
+ return box;
+}
+
+function songCard(song){
+ const card=document.createElement("div");
+ card.className="music-card";
+
+ const cover=createCover(song.artwork,song.title);
+ card.appendChild(cover);
+
+ const title=document.createElement("span");
+ title.className="music-name";
+ title.textContent=song.title;
+
+ const artist=document.createElement("span");
+ artist.className="music-artist";
+ artist.textContent=song.artist;
+
+ card.append(title,artist);
+ card.onclick=()=>openSong(song,"home");
+
+ if(!song.artwork){
+  getArtwork(song.title,song.artist).then(url=>{
+   if(url){
+    const img=document.createElement("img");
+    img.src=url;
+    img.alt=song.title;
+    img.onerror=()=>img.remove();
+    cover.textContent="";
+    cover.appendChild(img);
+    song.artwork=url;
+    saveData();
+   }
+  });
+ }
+ return card;
+}
+
+function rowCard(song,source){
+ const card=document.createElement("div");
+ card.className="song-row";
+
+ const cover=createCover(song.artwork,song.title);
+ cover.style.width="60px";
+ cover.style.height="60px";
+ card.appendChild(cover);
+
+ const info=document.createElement("div");
+ info.className="row-info";
+
+ const title=document.createElement("span");
+ title.className="row-title";
+ title.textContent=song.title;
+
+ const artist=document.createElement("span");
+ artist.className="row-artist";
+ artist.textContent=song.artist;
+
+ info.append(title,artist);
+
+ const arrow=document.createElement("span");
+ arrow.className="arrow";
+ arrow.textContent="›";
+
+ card.append(info,arrow);
+ card.onclick=()=>openSong(song,source);
+
+ if(!song.artwork){
+  getArtwork(song.title,song.artist).then(url=>{
+   if(url){
+    const img=document.createElement("img");
+    img.src=url;
+    img.alt=song.title;
+    img.onerror=()=>img.remove();
+    cover.textContent="";
+    cover.appendChild(img);
+    song.artwork=url;
+    saveData();
+   }
+  });
+ }
+ return card;
+}
+
+// HOME
+async function loadHome(){
+ const hero=await getArtwork("She Doesn't Mind","Sean Paul");
+ if(hero)document.getElementById("heroImage").src=hero;
+
+ const popular=document.getElementById("popular");
+ const more=document.getElementById("more");
+ const all=document.getElementById("allMusic");
+
+ popular.innerHTML="";
+ more.innerHTML="";
+ all.innerHTML="";
+
+ songs.forEach((song,index)=>{
+  const item={...song};
+  if(index<5)popular.appendChild(songCard(item));
+  else more.appendChild(songCard(item));
+  all.appendChild(songCard({...item}));
+ });
+
+ renderRecent();
+}
+
+function renderRecent(){
+ const target=document.getElementById("recent");
+ target.innerHTML="";
+
+ if(!recentSongs.length){
+  target.innerHTML='<p style="font-size:12px;color:#82776c">Your recent songs will appear here.</p>';
+  return;
+ }
+
+ recentSongs.slice(0,5).forEach(s=>{
+  target.appendChild(songCard(s));
+ });
+}
+
+function saveRecent(song){
+ recentSongs=recentSongs.filter(s=>songKey(s)!==songKey(song));
+ recentSongs.unshift(song);
+ recentSongs=recentSongs.slice(0,20);
+ saveData();
+ renderRecent();
+}
+
+function showRecent(){
+ showPage("recentPage");
+ const target=document.getElementById("allRecent");
+ target.innerHTML="";
+
+ if(!recentSongs.length){
+  target.innerHTML='<div class="message">Belum ada lagu yang dibuka.</div>';
+  return;
+ }
+ recentSongs.forEach(s=>target.appendChild(rowCard(s,"recentPage")));
+}
+
+// LYRICS
+function extractLyrics(data){
+ if(data.plainLyrics)return data.plainLyrics;
+ if(data.syncedLyrics){
+  return data.syncedLyrics.replace(
+   /^\[\d{1,2}:\d{2}(?:[.:]\d{1,3})?\]\s?/gm,""
+  );
+ }
+ return "";
+}
+
+async function openSong(song,source){
+ previousPage=source||"home";
+ currentSong=song;
+ showPage("detailPage");
+
+ document.getElementById("detailTitle").textContent=song.title;
+ document.getElementById("detailArtist").textContent=song.artist;
+
+ const area=document.getElementById("detailArtwork");
+ area.innerHTML="";
+
+ const cover=document.createElement("img");
+ cover.className="detail-cover";
+ cover.alt="Album "+song.title;
+ cover.src=song.artwork||"";
+ area.appendChild(cover);
+
+ if(!song.artwork){
+  getArtwork(song.title,song.artist).then(url=>{
+   if(url){
+    song.artwork=url;
+    cover.src=url;
+    saveData();
+   }
+  });
+ }
+
+ document.getElementById("youtubeLink").href=
+  "https://www.youtube.com/results?search_query="+
+  encodeURIComponent(song.title+" "+song.artist);
+
+ const lyric=document.getElementById("lyricText");
+ lyric.textContent="Sedang mencari lirik...";
+
+ saveRecent(song);
+
+ try{
+  const response=await fetch(
+   LYRICS_API+"?q="+encodeURIComponent(song.title+" "+song.artist)
+  );
+  if(!response.ok)throw Error("Lyrics unavailable");
+
+  const data=await response.json();
+
+  const match=data.find(x=>
+   x.trackName?.toLowerCase()===song.title.toLowerCase()&&
+   x.artistName?.toLowerCase()===song.artist.toLowerCase()
+  )||data.find(x=>
+   x.trackName?.toLowerCase()===song.title.toLowerCase()
+  );
+
+  if(match&&extractLyrics(match)){
+   lyric.textContent=extractLyrics(match);
+  }else{
+   lyric.textContent="Lirik lagu belum tersedia di database.";
+  }
+ }catch(e){
+  lyric.textContent="Gagal memuat lirik. Periksa koneksi internet.";
+ }
+}
+
+function copyTitle(){
+ if(currentSong){
+  navigator.clipboard?.writeText(
+   currentSong.title+" - "+currentSong.artist
+  );
+ }
+}
+
+// SEARCH
+document.getElementById("searchForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ const q=document.getElementById("query").value.trim();
+ if(!q)return;
+
+ const target=document.getElementById("searchResults");
+ const status=document.getElementById("searchStatus");
+
+ target.innerHTML="";
+ status.style.display="block";
+ status.textContent="Searching songs...";
+
+ document.getElementById("searchHeading").textContent="Results: "+q;
+
+ try{
+  const response=await fetch(
+   LYRICS_API+"?q="+encodeURIComponent(q)
+  );
+  if(!response.ok)throw Error("Search failed");
+
+  const data=await response.json();
+  const results=data.filter(x=>
+   !x.instrumental&&(x.plainLyrics||x.syncedLyrics)
+  ).slice(0,20);
+
+  if(!results.length){
+   status.textContent="Lagu tidak ditemukan. Coba judul lain.";
+   return;
+  }
+
+  status.style.display="none";
+
+  results.forEach(result=>{
+   rowCard({
+    title:result.trackName,
+    artist:result.artistName,
+    artwork:""
+   },"searchPage");
+
+   target.appendChild(rowCard({
+    title:result.trackName,
+    artist:result.artistName,
+    artwork:""
+   },"searchPage"));
+  });
+
+ }catch(e){
+  status.textContent="Search gagal. Periksa koneksi internet.";
+ }
+});
+
+// START
+loadHome();
+</script>
+</body>
+</html>
